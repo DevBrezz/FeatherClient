@@ -1,0 +1,8 @@
+# Feather Client - patterns.txt  (salin ke perangkat lalu Settings > Hook > Import patterns.txt)
+# Format: <minVersionCode> <maxVersionCode> <name> [adjust=N] [pos_offset=0xN] | <pattern hex, ?? = wildcard>
+# Nama yang didukung:
+#   fov          float getFov(void* this, float, bool)   -> dipakai Zoom
+#   player_tick  void  tick(void* this)  milik LocalPlayer + pos_offset = offset Vec3 posisi dari 'this' -> dipakai Koordinat
+# Buat barisnya dengan: python3 tools/make_pattern.py libminecraftpe.so <vaddr> --name fov
+#
+# (Sengaja kosong: pattern harus dari binary versi Minecraft yang kamu pakai.)
