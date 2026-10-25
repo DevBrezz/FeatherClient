@@ -15,6 +15,7 @@ import android.util.TypedValue
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -38,7 +39,7 @@ object HudOverlay {
     private val items = mutableListOf<Item>()
     private var crosshair: CrosshairView? = null
     private var keys: KeystrokesView? = null
-    private var menuBtn: TextView? = null
+    private var menuBtn: ImageView? = null
     private var zoomBtn: TextView? = null
     private var shield: View? = null
     private var toolbar: View? = null
@@ -116,10 +117,13 @@ object HudOverlay {
             add(a, r, Item(m, v, dx, dy))
         }
 
-        menuBtn = TextView(a).apply {
-            text = "🪶"; textSize = 16f; setTextColor(Color.WHITE); gravity = Gravity.CENTER; alpha = 0.8f
-            setBackgroundColor(Color.parseColor("#66000000"))
-            layoutParams = FrameLayout.LayoutParams(dp(38).toInt(), dp(38).toInt(), Gravity.TOP or Gravity.END).apply { topMargin = dp(8).toInt(); rightMargin = dp(8).toInt() }
+        menuBtn = ImageView(a).apply {
+            setImageResource(R.drawable.feather_ingame_logo)
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            contentDescription = "Open Feather modules"
+            alpha = 0.96f
+            elevation = dp(8)
+            layoutParams = FrameLayout.LayoutParams(dp(46).toInt(), dp(46).toInt(), Gravity.TOP or Gravity.END).apply { topMargin = dp(10).toInt(); rightMargin = dp(10).toInt() }
             setOnClickListener { toggleMenu() }
         }
         r.addView(menuBtn)
@@ -445,7 +449,6 @@ object HudOverlay {
             thickPx = ModuleConfig.getInt(a, "crosshair", "thick", 3) * d / 1.5f
             invalidate()
         }
-        menuBtn?.setTextColor(accent)
         zoomBtn?.visibility = if (ModuleConfig.isOn(a, "zoom") && !GameMenu.isOpen && !editMode) View.VISIBLE else View.GONE
     }
 
