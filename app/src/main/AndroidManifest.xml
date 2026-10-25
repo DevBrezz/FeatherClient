@@ -48,12 +48,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.mojang.minecraftpe.MainActivity"
-            android:exported="false"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode|navigation"
-            android:launchMode="singleTask"
-            android:screenOrientation="sensorLandscape"/>
 
     </application>
 
