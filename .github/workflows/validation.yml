@@ -1,0 +1,32 @@
+name: Feather Client Static Validation
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate module registry
+        run: python tools/validate_registry.py
+      - name: Check CMake source configuration
+        run: |
+          test -s app/src/main/cpp/CMakeLists.txt
+          grep -q 'add_library(clientmod SHARED' app/src/main/cpp/CMakeLists.txt
+      - name: Check Android project configuration
+        run: |
+          test -s settings.gradle
+          test -s build.gradle
+          test -s app/build.gradle
+          test -s app/src/main/AndroidManifest.xml
