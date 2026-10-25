@@ -6,6 +6,11 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.animation.ObjectAnimator
+import android.app.Dialog
+import android.view.animation.LinearInterpolator
+import android.os.Handler
+import android.os.Looper
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
@@ -100,7 +105,47 @@ class MainActivity : Activity() {
     }
 
     // ---------- Aksi ----------
-    fun launchGame() { ModLoader.launch(this)?.let { Ui.toast(this, it); render() } }
+    private var launchDialog: Dialog? = null
+    fun launchGame() {
+        if (launchDialog?.isShowing == true) return
+        val panel = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            setPadding(dp(28), dp(24), dp(28), dp(24))
+            background = Ui.shape(this@MainActivity, Ui.CARD, Ui.BORDER, 20)
+        }
+        val feather = ImageView(this).apply {
+            setImageResource(com.example.bedrockclient.R.drawable.feather_logo)
+            contentDescription = "Feather Client logo"
+        }
+        panel.addView(feather, LinearLayout.LayoutParams(dp(64), dp(64)).apply { bottomMargin = dp(12) })
+        panel.addView(Ui.text(this, "Launching Minecraft", 20f, Ui.FG, true).apply { gravity = Gravity.CENTER })
+        panel.addView(Ui.text(this, "Feather Client 1.7", 13f, Ui.MUTED).apply { gravity = Gravity.CENTER; setPadding(0, dp(4), 0, dp(14) ) })
+        panel.addView(ProgressBar(this).apply { isIndeterminate = true }, LinearLayout.LayoutParams(dp(180), dp(4)))
+        val dialog = Dialog(this).apply {
+            setContentView(panel)
+            setCancelable(false)
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+            window?.setLayout((resources.displayMetrics.widthPixels * 0.42f).toInt().coerceAtLeast(dp(260)), -2)
+        }
+        launchDialog = dialog
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setLayout((resources.displayMetrics.widthPixels * 0.42f).toInt().coerceAtLeast(dp(260)), -2)
+        ObjectAnimator.ofFloat(feather, View.ROTATION, -8f, 8f).apply {
+            duration = 750; repeatCount = ObjectAnimator.INFINITE; repeatMode = ObjectAnimator.REVERSE
+            interpolator = LinearInterpolator(); start()
+        }
+        Handler(Looper.getMainLooper()).postDelayed({
+            val error = ModLoader.launch(this)
+            if (error != null) {
+                if (dialog.isShowing) dialog.dismiss()
+                launchDialog = null
+                Ui.toast(this, error)
+                render()
+            }
+        }, 550)
+    }
 
     // ---------- Dependensi Minecraft ----------
     fun recheckMinecraft() {
