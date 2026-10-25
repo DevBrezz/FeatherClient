@@ -5,10 +5,10 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <application android:name=".HostApplication" android:label="Feather Client 1.7" android:icon="@drawable/feather_logo"
+    <application android:name=".HostApplication" android:label="Feather Client" android:icon="@mipmap/feather_launcher" android:roundIcon="@mipmap/feather_launcher"
         android:extractNativeLibs="true" android:largeHeap="true"
         android:theme="@android:style/Theme.Material.NoActionBar">
-        <activity android:name=".MainActivity" android:exported="true" android:screenOrientation="landscape" configChanges="orientation|screenSize|smallestScreenSize">
+        <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
