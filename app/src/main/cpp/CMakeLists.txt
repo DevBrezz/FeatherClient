@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.22)
+project(clientmod)
+set(CMAKE_CXX_STANDARD 17)
+option(USE_DOBBY "Pakai Dobby (relokasi instruksi penuh) sebagai ganti backend arm64 bawaan" OFF)
+add_library(clientmod SHARED main.cpp module_manager.cpp hook.cpp hook_arm64.cpp patterns.cpp hooks.cpp
+    modules/fps.cpp modules/cps.cpp modules/keystrokes.cpp)
+target_include_directories(clientmod PRIVATE .)
+find_library(log-lib log)
+target_link_libraries(clientmod ${log-lib})
+if(USE_DOBBY)
+  target_compile_definitions(clientmod PRIVATE USE_DOBBY)
+  target_link_libraries(clientmod ${CMAKE_CURRENT_SOURCE_DIR}/third_party/dobby/libdobby.a)
+endif()
