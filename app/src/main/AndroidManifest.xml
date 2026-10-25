@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <queries><package android:name="com.mojang.minecraftpe"/></queries>
+    <uses-feature android:glEsVersion="0x00030000" android:required="true"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <application android:name=".HostApplication" android:label="Feather Client"
+        android:extractNativeLibs="true" android:largeHeap="true"
+        android:theme="@android:style/Theme.Material.NoActionBar">
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".ImportActivity" android:exported="true" android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="content"/><data android:scheme="file"/>
+                <data android:mimeType="*/*"/>
+                <data android:pathPattern=".*\\.mcpack"/><data android:pathPattern=".*\\.mcworld"/>
+                <data android:pathPattern=".*\\.mcaddon"/><data android:pathPattern=".*\\.mctemplate"/>
+            </intent-filter>
+        </activity>
+        <!-- Kelas ini TIDAK ada di dex kita. Di-resolve saat runtime dari APK Minecraft asli
+             lewat classloader yang dipasang HostApplication. -->
+        <activity android:name="com.mojang.minecraftpe.MainActivity" android:exported="false"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode|navigation"
+            android:launchMode="singleTask" android:screenOrientation="sensorLandscape"/>
+    </application>
+</manifest>
