@@ -60,7 +60,13 @@ class MainActivity : Activity() {
         val root = Ui.vbox(this).apply { setBackgroundColor(Ui.BG) }
         val bar = Ui.hbox(this).apply { setPadding(dp(10), dp(30), dp(12), dp(6)) }
         bar.addView(Ui.text(this, "‹", 32f).apply { setPadding(dp(6), 0, dp(14), 0); setOnClickListener { onBackPressed() } })
-        logo = Ui.text(this, "🪶 FeatherClient", 20f, Ui.FG, true); bar.addView(logo)
+        val brandIcon = ImageView(this).apply {
+            setImageResource(R.drawable.feather_ingame_logo)
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            contentDescription = "Feather Client logo"
+        }
+        bar.addView(brandIcon, LinearLayout.LayoutParams(dp(34), dp(34)).apply { rightMargin = dp(8) })
+        logo = Ui.text(this, "FeatherClient", 20f, Ui.FG, true); bar.addView(logo)
         bar.addView(View(this), LinearLayout.LayoutParams(0, 1, 1f))
         val bell = FrameLayout(this).apply { setOnClickListener { showNotifications() } }
         bell.addView(Ui.text(this, "🔔", 22f).apply { setPadding(dp(8), dp(4), dp(8), dp(4)) })

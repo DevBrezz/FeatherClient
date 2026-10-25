@@ -32,9 +32,26 @@ object Screens {
         val land = a.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
         val root = page(a)
 
-        val hero = Ui.card(a)
-        hero.addView(Ui.text(a, "Minecraft", 34f, accent, true))
-        hero.addView(Ui.text(a, if (guard is MinecraftGuard.Result.Ok) "Bedrock Edition  •  ${guard.version}" else "Bedrock Edition", 16f, Ui.MUTED))
+        val hero = Ui.card(a).apply {
+            background = android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
+                intArrayOf(Color.parseColor("#101A30"), Color.parseColor("#0B0D0F"))
+            ).apply { cornerRadius = dp(20).toFloat(); setStroke(dp(1), Color.parseColor("#1769E8")) }
+            setPadding(dp(18), dp(18), dp(18), dp(16))
+        }
+        val brandRow = Ui.hbox(a)
+        val brandIcon = ImageView(a).apply {
+            setImageResource(R.drawable.feather_ingame_logo)
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            contentDescription = "Feather Client logo"
+        }
+        brandRow.addView(brandIcon, lp(dp(76), dp(76)))
+        val brandText = Ui.vbox(a).apply { setPadding(dp(14), 0, 0, 0) }
+        brandText.addView(Ui.text(a, "FEATHER CLIENT", 12f, Color.parseColor("#35B7FF"), true))
+        brandText.addView(Ui.text(a, "Minecraft", 29f, Color.WHITE, true))
+        brandText.addView(Ui.text(a, if (guard is MinecraftGuard.Result.Ok) "Bedrock Edition  •  ${guard.version}" else "Bedrock Edition", 13f, Color.parseColor("#AAB8D0")))
+        brandRow.addView(brandText, lp(0, -2, 1f))
+        hero.addView(brandRow)
         if (guard is MinecraftGuard.Result.Fail) hero.addView(Ui.text(a, "⚠ ${guard.reason}", 13f, RED).apply { setPadding(0, dp(6), 0, 0) })
 
         val controls = Ui.hbox(a).apply { setPadding(0, dp(14), 0, dp(10)) }

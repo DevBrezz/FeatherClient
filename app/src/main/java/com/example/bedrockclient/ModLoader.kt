@@ -2,34 +2,30 @@ package com.example.bedrockclient
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 
+/**
+ * Launches the installed, official Minecraft app directly. Declaring Minecraft's Activity
+ * inside Feather's package/classloader can pass static checks but crash when MC initializes
+ * its own resources and package context.
+ */
 object ModLoader {
-    /** Return null jika peluncuran dimulai, atau pesan error yang jelas. Semua pemeriksaan dilakukan SEBELUM startActivity. */
     fun launch(ctx: Context): String? {
-        // 1. Periksa ulang dependensi (bukan memakai hasil lama).
         MinecraftGuard.invalidate()
-        val s = MinecraftGuard.status(ctx, force = true)
-        if (s !is MinecraftStatus.Compatible) return MinecraftGuard.describe(s)
+        val status = MinecraftGuard.status(ctx, force = true)
+        if (status !is MinecraftStatus.Compatible) return MinecraftGuard.describe(status)
 
-        // 2. Pastikan classloader Minecraft siap & kelas utama bisa dimuat (kegagalan di ActivityThread = crash, tidak bisa di-catch).
-        HostApplication.ensureLoader()?.let { return "Loader Minecraft belum siap: $it" }
-
-        // 3. Library native Feather (UnsatisfiedLinkError bila ABI tidak cocok).
-        try {
-            NativeBridge.init(ModuleConfig.serialize(ctx), s.code, java.io.File(ctx.filesDir, "patterns.txt").absolutePath)
-            NativeBridge.setZoomLevel(ModuleConfig.getInt(ctx, "zoom", "level", 25) / 100f)
+        val intent = try {
+            ctx.packageManager.getLaunchIntentForPackage(MinecraftGuard.MC_PACKAGE)
         } catch (t: Throwable) {
-            return "Library native Feather gagal dimuat (${t.javaClass.simpleName}: ${t.message}). ABI perangkat: ${Build.SUPPORTED_ABIS.joinToString()}"
-        }
+            return "Tidak bisa membuka Minecraft: ${t.javaClass.simpleName}: ${t.message}"
+        } ?: return "Minecraft terdeteksi, tetapi launcher resminya tidak ditemukan. Buka Minecraft sekali dari ikon aplikasinya."
 
-        ToolState.sessionStart = 0L      // sesi baru dimulai saat game tampil
-
-        // 4. Luncurkan. Flag 'pending' dihapus saat MainActivity game benar-benar resume; jika tersisa, peluncuran sebelumnya tidak selesai.
-        Prefs.setLaunchPending(ctx, true)
-        val i = Intent().setClassName(ctx.packageName, HostApplication.MC_MAIN).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        return try { ctx.startActivity(i); null } catch (e: Exception) {
-            Prefs.setLaunchPending(ctx, false); "Gagal membuka game: ${e.javaClass.simpleName}: ${e.message}"
+        return try {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            ctx.startActivity(intent)
+            null
+        } catch (t: Throwable) {
+            "Gagal membuka Minecraft: ${t.javaClass.simpleName}: ${t.message}"
         }
     }
 }
